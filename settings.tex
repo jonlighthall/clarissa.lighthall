@@ -1,8 +1,49 @@
 \usepackage{ifthen}
-%\newif\break
 \newboolean{break}
-\setboolean{break}{false}
-\newcounter{printpage}
+\setboolean{break}{true} % set page breaks to match manuscript
+\newcounter{printpage} % manuscript page number
 \setcounter{printpage}{0}
-\newcommand{\pageno}{\textbf{[PAGE~\theprintpage]}}
-\newcommand{\insertpage}{\addtocounter{printpage}{1}\ifthenelse{\boolean{break}}{}{ \pageno{} }}
+\newcommand{\pageno}{\addtocounter{printpage}{1}\noindent \textbf{[PAGE~\theprintpage]}}
+\newcommand{\pagefoot}{\textsc{page~\theprintpage}}
+\newboolean{mark}
+\setboolean{mark}{true} % set in-line manuscript page indicators
+\newboolean{do_foot}
+\setboolean{do_foot}{true} % set manuscript page header/footer
+
+\ifthenelse{\boolean{mark}}{%do mark
+    \newcommand{\markpage}{\ifthenelse{\boolean{break}}%
+    % do mark do break
+    {\newpage\ifthenelse{\boolean{do_foot}}%
+        % do mark do break do foot
+        {\lhead{\pagefoot}}%
+        % do mark do break don't do foot
+        {}%
+        \pageno\\}%
+    % do mark, don't do break
+    {\ifthenelse{\boolean{do_foot}}%
+        % do mark, don't do break, do foot
+        % numbering not always correct
+        {\lhead{\pagefoot}}%
+        % do mark, don't do break, don't do foot
+        {} \pageno{}} }%
+}
+{% don't do mark
+    \newcommand{\markpage}{\ifthenelse{\boolean{break}}%
+        % don't do mark, do break
+        {\newpage\noindent\ifthenelse{\boolean{do_foot}}%
+            % don't do mark, do break, do foot
+            {\lhead{\pagefoot}}%
+            % don't do mark, do break, don't do foot
+            {}%
+            \addtocounter{printpage}{1}%
+        }%
+        % don't do mark, don't do break
+        {\ifthenelse{\boolean{do_foot}}%
+            % foot
+            {\lhead{\pagefoot}}%
+            % no foot
+            {}%
+            \addtocounter{printpage}{1}%
+        }%
+    }
+}
