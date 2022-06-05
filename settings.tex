@@ -1,0 +1,8 @@
+\usepackage{ifthen}
+%\newif\break
+\newboolean{break}
+\setboolean{break}{false}
+\newcounter{printpage}
+\setcounter{printpage}{0}
+\newcommand{\pageno}{\textbf{[PAGE~\theprintpage]}}
+\newcommand{\insertpage}{\addtocounter{printpage}{1}\ifthenelse{\boolean{break}}{}{ \pageno{} }}
